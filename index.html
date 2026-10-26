@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 게임폰</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#d9e2de; --ink:#16302b; --sub:#587068; --panel:#e4ece8; --off:#c3d3cc; --wall1:#2b5d66; --wall2:#e9a23b;
+  --homeink:#fff; --lit:#ffb627; --glow:rgba(255,182,39,.75); --ok:#2f9e6e; --bad:#d6453d; --btn:#16302b; --btnink:#eef3ef;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0a1210; --ink:#e6f1ec; --sub:#8fb0a6; --panel:#16282a; --off:#243a3a; --wall1:#17383f; --wall2:#b5731c; --btn:#e6f1ec; --btnink:#0e1a18}}
+:root[data-theme="dark"]{--page:#0a1210; --ink:#e6f1ec; --sub:#8fb0a6; --panel:#16282a; --off:#243a3a; --wall1:#17383f; --wall2:#b5731c; --btn:#e6f1ec; --btnink:#0e1a18}
+:root[data-theme="sunset"]{--page:#2a1630; --ink:#fff1e6; --sub:#e3b7a0; --panel:#3a2040; --off:#55305a; --wall1:#ff6b6b; --wall2:#ffd166; --homeink:#2a1630; --btn:#ffd166; --btnink:#2a1630}
+:root[data-theme="sakura"]{--page:#f8e6ee; --ink:#4a2638; --sub:#9a6a80; --panel:#fff1f6; --off:#f3cddb; --wall1:#f7a8c4; --wall2:#ffe0ec; --homeink:#4a2638; --btn:#4a2638; --btnink:#fff1f6}
+:root[data-theme="neon"]{--page:#050510; --ink:#e8f0ff; --sub:#7f8ec4; --panel:#0c0c24; --off:#1b1b44; --wall1:#3b1fa8; --wall2:#00d1ff; --homeink:#e8f0ff; --btn:#00e5ff; --btnink:#050510}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--page);font-family:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);display:flex;align-items:center;justify-content:center}
+#phone{position:relative;width:min(100%,400px);height:min(100%,800px);background:var(--panel);display:flex;flex-direction:column;overflow:hidden;touch-action:manipulation}
+@media (min-width:520px){#phone{height:min(94vh,800px);border-radius:48px;border:6px solid #0d1412;box-shadow:0 0 0 2px rgba(255,255,255,.12),0 30px 70px rgba(0,0,0,.35)}#phone::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:88px;height:24px;border-radius:14px;background:#0d1412;z-index:5}#status{padding-top:16px}}
+#status{display:flex;justify-content:space-between;padding:10px 22px 4px;font-size:14px;color:var(--ink);z-index:2}
+#screen{flex:1;min-height:0;position:relative;overflow:hidden}
+#theme,#wpb{border:0;background:var(--off);color:var(--ink);font:inherit;font-size:13px;border-radius:12px;padding:3px 10px;cursor:pointer;z-index:6}
+#theme:focus-visible,#wpb:focus-visible{outline:3px solid var(--lit)}
+.btns{display:flex;gap:6px;z-index:6}
+#wp{position:absolute;top:46px;right:10px;z-index:15;background:var(--panel);color:var(--ink);border-radius:18px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:grid;grid-template-columns:repeat(4,40px);gap:10px}
+#wp[hidden]{display:none}
+.sw{width:40px;height:40px;border-radius:50%;border:2px solid var(--off);cursor:pointer;padding:0;font:inherit;font-size:12px;color:var(--ink);background:var(--panel)}
+.sw:focus-visible{outline:3px solid var(--lit)}
+#wp label{grid-column:1/-1;font-size:14px;display:flex;align-items:center;gap:8px}
+#wp input{width:44px;height:30px;border:0;padding:0;background:none;cursor:pointer}
+#homebar{border:0;background:transparent;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#homebar i{display:block;width:120px;height:5px;border-radius:3px;background:var(--ink);opacity:.5}
+#homebar:focus-visible{outline:3px solid var(--lit)}
+.home{height:100%;padding:14px 20px;display:flex;flex-direction:column;gap:22px;background:radial-gradient(circle at 85% 8%,var(--wall2),transparent 60%),linear-gradient(170deg,var(--wall1),var(--wall1));color:var(--homeink)}
+.home .clock{font-size:60px;line-height:1;margin-top:8px}
+.home .date{font-size:17px;opacity:.85;margin-top:6px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 8px}
+.app-btn{border:0;background:transparent;color:inherit;font:inherit;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:0}
+.app-btn:focus-visible{outline:3px solid currentColor;outline-offset:3px;border-radius:14px}
+.icon{width:62px;height:62px;border-radius:20px;background:linear-gradient(145deg,#1d363d,#0b161a);box-shadow:0 6px 14px rgba(0,0,0,.28);display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:12px}
+.icon i{border-radius:5px;background:#2d4a50}
+.app{height:100%;display:flex;flex-direction:column;gap:12px;padding:8px 16px 12px;background:var(--panel)}
+.bar{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--sub)}
+.bar b{font-weight:400;font-size:22px;color:var(--ink)}
+.bar i{font-style:normal;color:var(--ink)}
+.msg{margin:0;min-height:26px;font-size:18px;text-align:center}
+.board{display:grid;gap:2px;padding:4px;background:var(--off);border-radius:14px;touch-action:none}
+.cell{background:var(--panel);border-radius:5px}
+.cell.gh{background:var(--ink);opacity:.35}
+.tray{display:flex;justify-content:space-around;align-items:center;flex:1;min-height:96px;touch-action:none}
+.slot{width:30%;height:100%;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none}
+.pc{display:grid;gap:2px}
+.pc i{border-radius:4px}
+.float{position:fixed;left:0;top:0;z-index:20;pointer-events:none;display:grid;gap:2px}
+.float i{border-radius:5px}
+.over{position:absolute;inset:0;background:rgba(10,18,16,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;font-size:24px;z-index:10}
+.over[hidden]{display:none}
+.btn{font:inherit;font-size:19px;border:0;border-radius:14px;padding:12px 22px;background:var(--btn);color:var(--btnink);cursor:pointer}
+.btn:focus-visible{outline:3px solid var(--lit);outline-offset:2px}
+.mgrid{display:grid;gap:10px;background:var(--off);padding:12px;border-radius:22px;width:100%;aspect-ratio:1/1;align-self:center}
+.tile{border:0;border-radius:14px;background:var(--panel);cursor:pointer;padding:0;transition:background .12s,box-shadow .12s}
+.tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.tile.lit{background:var(--lit);box-shadow:0 0 22px 4px var(--glow)}
+.tile.ok{background:var(--ok)}.tile.bad{background:var(--bad)}.tile.miss{background:var(--lit);opacity:.55}
+.mgrid.locked .tile{cursor:default}
+@media (prefers-reduced-motion: reduce){.tile{transition:none}}
+</style>
+</head>
+<body>
+<div id="phone">
+  <div id="status"><span id="sclock">--:--</span><span class="btns"><button id="wpb" aria-label="배경화면 색 바꾸기">🖼 배경</button></span></div>
+  <div id="wp" hidden role="dialog" aria-label="배경화면 색"></div>
+  <div id="screen"></div>
+  <button id="homebar" aria-label="홈으로 가기"><i></i></button>
+</div>
+<script>
+(function(){
+var screen=document.getElementById('screen'), destroy=null;
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)});}
+function two(n){return (n<10?'0':'')+n;}
+var DAYS=['일','월','화','수','목','금','토'];
+
+/* ---------- 블록게임 ---------- */
+function blockGame(el){
+  var alive=true, SH=[[[1]],[[1,1]],[[1],[1]],[[1,1,1]],[[1],[1],[1]],[[1,1,1,1]],[[1],[1],[1],[1]],[[1,1],[1,1]],[[1,1,1],[1,1,1],[1,1,1]],
+   [[1,0],[1,1]],[[0,1],[1,1]],[[1,1],[1,0]],[[1,1],[0,1]],[[1,0,0],[1,0,0],[1,1,1]],[[1,1,1],[0,1,0]],[[1,1,1],[1,0,0]],[[1,1],[1,0],[1,0]]],
+   COL=['#e4572e','#29a8ab','#f2b134','#6b5bd2','#3da35d','#d6457f'], N=8,
+   B,P,score=0,best=0,over=false,drag=null,cells=[];
+  try{best=parseInt(localStorage.getItem('blk-best'))||0;}catch(e){}
+  el.innerHTML='<div class="app"><div class="bar"><b>블록게임</b><span>점수 <i id="sc">0</i> · 최고 <i id="bs">0</i></span></div>'+
+   '<div class="board" id="bd"></div><div class="tray" id="tr"></div>'+
+   '<div class="over" id="ov" hidden><div>게임 끝!</div><div id="fin"></div><button class="btn" id="re">다시 하기</button></div></div>';
+  var bd=el.querySelector('#bd'),tr=el.querySelector('#tr'),ov=el.querySelector('#ov');
+  bd.style.gridTemplateColumns='repeat('+N+',1fr)';bd.style.gridTemplateRows='repeat('+N+',1fr)';
+  var sq=Math.min(el.clientWidth-32,el.clientHeight*0.52);bd.style.width=sq+'px';bd.style.height=sq+'px';bd.style.alignSelf='center';
+  for(var i=0;i<N*N;i++){var d=document.createElement('div');d.className='cell';bd.appendChild(d);cells.push(d);}
+  function hud(){el.querySelector('#sc').textContent=score;el.querySelector('#bs').textContent=best;}
+  function draw(){for(var r=0;r<N;r++)for(var c=0;c<N;c++){var d=cells[r*N+c];d.style.background=B[r][c]||'';d.classList.remove('gh');}}
+  function fits(m,r,c){for(var i=0;i<m.length;i++)for(var j=0;j<m[i].length;j++){if(!m[i][j])continue;var rr=r+i,cc=c+j;if(rr<0||cc<0||rr>=N||cc>=N||B[rr][cc])return false;}return true;}
+  function canAny(){for(var k=0;k<3;k++){if(!P[k])continue;for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(fits(P[k].m,r,c))return true;}return false;}
+  function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+  function pieceHTML(p,sz){var w=p.m[0].length,h='<div class="pc" style="grid-template-columns:repeat('+w+','+sz+'px)">';
+    p.m.forEach(function(row){row.forEach(function(v){h+='<i style="width:'+sz+'px;height:'+sz+'px;'+(v?'background:'+p.c:'')+'"></i>';});});return h+'</div>';}
+  function drawTray(){tr.innerHTML='';P.forEach(function(p,i){var s=document.createElement('div');s.className='slot';s.dataset.i=i;if(p)s.innerHTML=pieceHTML(p,17);tr.appendChild(s);});}
+  function deal(){P=[0,1,2].map(function(){return {m:rnd(SH),c:rnd(COL)};});drawTray();}
+  function end(){over=true;el.querySelector('#fin').textContent='점수 '+score;ov.hidden=false;}
+  function start(){B=[];for(var r=0;r<N;r++)B.push(new Array(N).fill(0));score=0;over=false;ov.hidden=true;deal();draw();hud();if(!canAny())end();}
+  function burst(r,c,col,n){
+    if(!col||!el.animate||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var rc=cells[r*N+c].getBoundingClientRect(),x=rc.left+rc.width/2,y=rc.top+rc.height/2,cnt=3+Math.min(n,4);
+    for(var i=0;i<cnt;i++){
+      var p=document.createElement('i'),s=4+Math.random()*6,a=Math.random()*6.283,d=25+Math.random()*(35+n*20);
+      p.style.cssText='position:fixed;left:'+(x-s/2)+'px;top:'+(y-s/2)+'px;width:'+s+'px;height:'+s+'px;border-radius:'+(Math.random()<.5?'50%':'2px')+';background:'+col+';pointer-events:none;z-index:30';
+      document.body.appendChild(p);
+      var an=p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+Math.cos(a)*d+'px,'+(Math.sin(a)*d+20)+'px) scale(0)',opacity:0}],{duration:500+Math.random()*350,easing:'cubic-bezier(.2,.7,.3,1)'});
+      an.onfinish=(function(q){return function(){q.remove();};})(p);
+    }
+  }
+  function place(k,r,c){
+    var p=P[k],n=0;
+    p.m.forEach(function(row,i){row.forEach(function(v,j){if(v){B[r+i][c+j]=p.c;n++;}});});
+    var full=[],kill={};
+    for(var a=0;a<N;a++){
+      if(B[a].every(function(x){return x;}))full.push(['r',a]);
+      var col=true;for(var b=0;b<N;b++)if(!B[b][a])col=false;if(col)full.push(['c',a]);
+    }
+    full.forEach(function(f){for(var t=0;t<N;t++){var rr=f[0]=='r'?f[1]:t,cc=f[0]=='r'?t:f[1];kill[rr+','+cc]=1;}});
+    Object.keys(kill).forEach(function(s){var q=s.split(',');burst(+q[0],+q[1],B[q[0]][q[1]],full.length);B[q[0]][q[1]]=0;});
+    score+=n+full.length*full.length*10;
+    if(score>best){best=score;try{localStorage.setItem('blk-best',best);}catch(e){}}
+    P[k]=null;if(!P[0]&&!P[1]&&!P[2])deal();else drawTray();
+    draw();hud();if(!canAny())end();
+  }
+  function step(){return (bd.getBoundingClientRect().width-8)/N;}
+  function spot(e){
+    var rc=bd.getBoundingClientRect(),st=step(),fx=e.clientX-drag.w/2,fy=e.clientY-drag.h-46;
+    drag.f.style.transform='translate('+fx+'px,'+fy+'px)';
+    return {r:Math.round((fy-rc.top-4)/st),c:Math.round((fx-rc.left-4)/st)};
+  }
+  function ghost(r,c){
+    draw();if(!fits(drag.p.m,r,c))return;
+    drag.p.m.forEach(function(row,i){row.forEach(function(v,j){if(v)cells[(r+i)*N+c+j].classList.add('gh');});});
+  }
+  function move(e){if(!drag)return;var s=spot(e);drag.s=s;ghost(s.r,s.c);}
+  function up(e){
+    if(!drag)return;var s=spot(e);
+    drag.f.remove();var k=drag.k,p=drag.p;
+    var ok=fits(p.m,s.r,s.c);drag=null;draw();
+    if(ok)place(k,s.r,s.c);
+  }
+  tr.addEventListener('pointerdown',function(e){
+    var sl=e.target.closest('.slot');if(!sl||over||drag)return;
+    var k=+sl.dataset.i,p=P[k];if(!p)return;
+    var st=step(),f=document.createElement('div'),w=p.m[0].length,h=p.m.length;
+    f.className='float';f.style.gridTemplateColumns='repeat('+w+','+(st-2)+'px)';
+    p.m.forEach(function(row){row.forEach(function(v){f.insertAdjacentHTML('beforeend','<i style="width:'+(st-2)+'px;height:'+(st-2)+'px;'+(v?'background:'+p.c:'')+'"></i>');});});
+    document.body.appendChild(f);
+    drag={k:k,p:p,f:f,w:w*st,h:h*st};spot(e);e.preventDefault();
+  });
+  window.addEventListener('pointermove',move);
+  window.addEventListener('pointerup',up);
+  window.addEventListener('pointercancel',up);
+  el.querySelector('#re').addEventListener('click',start);
+  start();
+  return function(){window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);if(drag)drag.f.remove();};
+}
+
+/* ---------- 기억력 게임 ---------- */
+function memGame(el){
+  var alive=true,level=1,lives=3,size=2,targets=[],found=[],accepting=false,running=false,best=0;
+  try{best=parseInt(localStorage.getItem('memflash-best'))||0;}catch(e){}
+  el.innerHTML='<div class="app"><div class="bar"><b>기억력 게임</b><span>레벨 <i id="lv">1</i> · <i id="lf">♥♥♥</i> · 최고 <i id="bs">0</i></span></div>'+
+   '<p class="msg" id="msg">시작 버튼을 눌러 봐!</p><div class="mgrid locked" id="g"></div><button class="btn" id="st">시작하기</button></div>';
+  var g=el.querySelector('#g'),msg=el.querySelector('#msg'),sb=el.querySelector('#st');
+  var gs=Math.min(el.clientWidth-32,el.clientHeight-170);g.style.width=gs+'px';g.style.alignSelf='center';
+  function cfg(n){var s=Math.floor((n-1)/3),st=(n-1)%3,sz=Math.min(2+s,6);return {size:sz,count:Math.min(1+s+st,sz*sz-1)};}
+  function hud(){el.querySelector('#lv').textContent=level;var h='';for(var i=0;i<3;i++)h+=i<lives?'♥':'♡';el.querySelector('#lf').textContent=h;el.querySelector('#bs').textContent=best;}
+  function build(){g.innerHTML='';g.style.gridTemplateColumns='repeat('+size+',1fr)';g.style.gridTemplateRows='repeat('+size+',1fr)';
+    for(var i=0;i<size*size;i++){var b=document.createElement('button');b.className='tile';b.type='button';b.dataset.i=i;
+      b.setAttribute('aria-label',(Math.floor(i/size)+1)+'행 '+(i%size+1)+'열');b.addEventListener('click',tap);g.appendChild(b);}}
+  function pick(n,t){var a=[];for(var i=0;i<t;i++)a.push(i);for(var j=a.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1)),x=a[j];a[j]=a[k];a[k]=x;}return a.slice(0,n);}
+  async function round(){
+    running=true;accepting=false;sb.disabled=true;var c=cfg(level);size=c.size;build();hud();g.classList.add('locked');
+    targets=pick(c.count,size*size);found=[];msg.textContent='레벨 '+level+' · 잘 봐!';
+    await wait(900);if(!alive)return;
+    var t=g.children;targets.forEach(function(i){t[i].classList.add('lit');});
+    await wait(650+c.count*180);if(!alive)return;
+    targets.forEach(function(i){t[i].classList.remove('lit');});await wait(150);if(!alive)return;
+    accepting=true;g.classList.remove('locked');msg.textContent='깜빡인 칸을 눌러 봐 (0/'+c.count+')';
+  }
+  function tap(e){
+    if(!accepting)return;var i=+e.currentTarget.dataset.i;if(found.indexOf(i)>-1)return;
+    if(targets.indexOf(i)>-1){found.push(i);e.currentTarget.classList.add('ok');msg.textContent='깜빡인 칸을 눌러 봐 ('+found.length+'/'+targets.length+')';if(found.length===targets.length)win();}
+    else{e.currentTarget.classList.add('bad');fail();}
+  }
+  async function win(){accepting=false;g.classList.add('locked');msg.textContent='정답! 다음 레벨로 가자';
+    if(level>best){best=level;try{localStorage.setItem('memflash-best',best);}catch(e){}}
+    level++;await wait(1100);if(!alive)return;round();}
+  async function fail(){
+    accepting=false;g.classList.add('locked');lives--;hud();var t=g.children;
+    targets.forEach(function(i){if(found.indexOf(i)<0)t[i].classList.add('miss');});
+    if(lives>0){msg.textContent='아쉬워! 목숨 '+lives+'개 남음. 같은 레벨 다시!';await wait(1800);if(!alive)return;round();}
+    else{msg.textContent='게임 끝! 도달한 레벨: '+level;running=false;sb.disabled=false;sb.textContent='다시 하기';}
+  }
+  sb.addEventListener('click',function(){if(running)return;level=1;lives=3;round();});
+  build();hud();
+  return function(){alive=false;};
+}
+
+/* ---------- 홈 화면 ---------- */
+var APPS=[
+  {name:'블록게임',mount:blockGame,icon:'<i style="background:#e4572e"></i><i style="background:#e4572e"></i><i style="background:#29a8ab"></i><i style="background:#f2b134"></i>'},
+  {name:'기억력 게임',mount:memGame,icon:'<i style="background:#ffb627;box-shadow:0 0 8px #ffb627"></i><i></i><i></i><i></i>'}
+];
+function home(){
+  if(destroy){destroy();destroy=null;}
+  var h='<div class="home"><div><div class="clock" id="hc"></div><div class="date" id="hd"></div></div><div class="apps">';
+  APPS.forEach(function(a,i){h+='<button class="app-btn" data-i="'+i+'"><div class="icon">'+a.icon+'</div>'+a.name+'</button>';});
+  screen.innerHTML=h+'</div></div>';
+  screen.querySelectorAll('.app-btn').forEach(function(b){b.addEventListener('click',function(){
+    screen.innerHTML='';destroy=APPS[+b.dataset.i].mount(screen);});});
+  tick();
+}
+function tick(){
+  var d=new Date(),t=two(d.getHours())+':'+two(d.getMinutes());
+  document.getElementById('sclock').textContent=t;
+  var hc=document.getElementById('hc'),hd=document.getElementById('hd');
+  if(hc){hc.textContent=t;hd.textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 '+DAYS[d.getDay()]+'요일';}
+}
+document.getElementById('homebar').addEventListener('click',home);
+var WP=[['기본',null,null],['민트','#a8e6cf','#dcedc1'],['하늘','#a0d2f7','#d6ecff'],['라벤더','#c9b6f2','#ecdcff'],['분홍','#f7b6d2','#ffe3ef'],['복숭아','#ffc9a8','#ffe8d1'],['레몬','#f9e79f','#fff6cf'],['연두','#c5e8a0','#eaf7d0']];
+function lum(h){var n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255;}
+function mix(h){var n=parseInt(h.slice(1),16),c=[n>>16,(n>>8)&255,n&255].map(function(x){return ('0'+Math.round(x+(255-x)*0.55).toString(16)).slice(-2);});return '#'+c.join('');}
+function applyWP(a,b){
+  var st=document.documentElement.style;
+  if(!a){['--wall1','--wall2','--homeink'].forEach(function(k){st.removeProperty(k);});}
+  else{st.setProperty('--wall1',a);st.setProperty('--wall2',b);st.setProperty('--homeink',lum(a)>0.6?'#16302b':'#fff');}
+  try{localStorage.setItem('gp-wp',a?a+','+b:'');}catch(e){}
+}
+var wp=document.getElementById('wp'),wpb=document.getElementById('wpb');
+WP.forEach(function(w){
+  var b=document.createElement('button');b.type='button';b.className='sw';b.title=w[0];b.setAttribute('aria-label',w[0]);
+  if(w[1])b.style.background='linear-gradient(135deg,'+w[1]+','+w[2]+')';else b.textContent='기본';
+  b.addEventListener('click',function(){applyWP(w[1],w[2]);});wp.appendChild(b);
+});
+var lb=document.createElement('label');lb.innerHTML='직접 고르기 <input type="color" id="wpc" value="#2b5d66">';wp.appendChild(lb);
+lb.querySelector('input').addEventListener('input',function(e){applyWP(e.target.value,mix(e.target.value));});
+wpb.addEventListener('click',function(){if(!screen.querySelector('.home'))home();wp.hidden=!wp.hidden;});
+document.addEventListener('click',function(e){if(!wp.hidden&&!wp.contains(e.target)&&!e.target.closest('#wpb'))wp.hidden=true;});
+try{var sw=localStorage.getItem('gp-wp');if(sw){var q=sw.split(',');applyWP(q[0],q[1]);}}catch(e){}
+setInterval(tick,15000);
+home();
+})();
+</script>
+</body>
+</html>
